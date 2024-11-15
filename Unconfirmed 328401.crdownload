@@ -1,0 +1,198 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[10]:
+
+
+pip install pipwin
+
+
+# In[13]:
+
+
+pip install scipy
+
+
+# In[4]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import norm
+from scipy.stats import zscore
+df=pd.read_csv("house_price (2).csv")
+
+
+# In[16]:
+
+
+df
+
+
+# In[5]:
+
+
+df["price_per_sqft"].describe()
+
+
+# # mean function
+# 
+
+# In[6]:
+
+
+m=df.price_per_sqft.mean()
+m
+
+
+# In[7]:
+
+
+s=df.price_per_sqft.std()
+s
+
+
+# In[8]:
+
+
+m-3*s
+
+
+# In[9]:
+
+
+m+3*s
+
+
+# In[ ]:
+
+
+#values less than -312261 and greater than 328101 are the outliers
+
+
+# In[10]:
+
+
+df_withoutoutlier=df[(df.price_per_sqft>-312261)&(df.price_per_sqft<328101)]
+df_withoutoutlier
+
+
+# # IQR FUNCTION
+
+# In[11]:
+
+
+Q1 =df['price_per_sqft'].quantile(0.25)
+Q3 =df['price_per_sqft'].quantile(0.75)
+IQR =Q3-Q1
+Q1
+Q3
+IQR
+
+
+# In[12]:
+
+
+lower=Q1-1.5*IQR
+upper=Q3+1.5*IQR
+lower,upper
+
+
+# In[13]:
+
+
+df[(df.price_per_sqft<-308) | (df.price_per_sqft>11892)] #outliers
+
+
+# In[14]:
+
+
+df_without_outlier=df[(df.price_per_sqft>-308) & (df.price_per_sqft<11892)] #without outlier
+df_without_outlier
+
+
+# In[15]:
+
+
+from matplotlib import pyplot as plt
+
+
+# In[ ]:
+
+
+#boxplot
+
+
+# In[16]:
+
+
+#without outliers
+plt.boxplot(df_without_outlier['price_per_sqft'])
+plt.show
+
+
+# # zscore method
+
+# In[17]:
+
+
+df['zscore']=(df.price_per_sqft-m)/s
+df
+
+
+# In[18]:
+
+
+df[(df.zscore>-3) & (df.zscore<3)]
+
+
+# In[19]:
+
+
+df1=df.drop(['zscore','location','size'],axis=1)
+df1
+
+
+# In[20]:
+
+
+corr1=df1.corr()
+corr1
+
+
+# In[21]:
+
+
+sns.scatterplot(data=df, x='total_sqft', y='price' , sizes=(20,200), palette='virdis')
+sns.scatterplot(data=df, x='total_sqft' , y='price')
+plt.title('Scatter Plot of variables')
+plt.xlabel('Total Square Feet')
+plt.ylabel('Price')
+plt.show()
+
+
+# In[22]:
+
+
+sns.heatmap(corr1,annot=True)
+
+
+# In[23]:
+
+
+sns.histplot(data=df_withoutoutlier,x=df_withoutoutlier.price_per_sqft,kde=True)
+
+
+# In[24]:
+
+
+sns.boxplot(data=df[['price_per_sqft']])
+
+
+# In[ ]:
+
+
+
+
